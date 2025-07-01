@@ -1,0 +1,34 @@
+# Date: 2025-04-05
+# Created by: Addisu Taye
+# Purpose: Orchestrate services including FastAPI app and MLflow tracking server.
+# Key features:
+# - Builds and runs the FastAPI service
+# - Sets up an MLflow tracking server for model management
+# - Configures environment variables and volumes
+# - Enables seamless integration between services
+# Task Number: 6
+
+version: '3.8'
+
+services:
+  credit-risk-api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+    volumes:
+      - .:/app
+      - mlflow-data:/mlruns
+  
+  mlflow-server:
+    image: marrrk/mlflow-tracking-server:latest
+    ports:
+      - "5000:5000"
+    environment:
+      - ARTIFACT_ROOT=/mlruns
+    volumes:
+      - mlflow-data:/mlruns
+
+volumes:
+  mlflow-data:
